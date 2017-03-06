@@ -1,3 +1,11 @@
+---
+layout: post
+title: 初探 Android Unit Test
+description: Android 单元测试学习
+category: blog
+---
+
+
 ### 单元测试的目标函数主要有三种：
 
 * 有明确的返回值，如上图的dosomething(Boolean param)，做单元测试时，只需调用这个函数，然后验证函数的返回值是否符合预期结果。

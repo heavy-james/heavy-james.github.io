@@ -1,3 +1,11 @@
+---
+layout: post
+title: TestSuites
+description: 单元测试主要维护流程分解
+category: blog
+---
+
+
 ## Test Suites
 ### 进入流程
 入口数据-->取频道数据-->刷新频道列表-->更新频道列表焦点-->取视频列表数据（第一个频道-->刷新视频列表-->播放默认位置视频-->更新播放状态（title、视频列表焦点）
