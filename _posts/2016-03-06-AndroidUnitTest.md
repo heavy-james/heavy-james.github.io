@@ -208,10 +208,19 @@ category: blog
 
 现在我们把这个单元测试，用Android Studio来运行起来。  
 
-Android Studio 在创建工程的时候，默认创建了两个目录用于存放测试代码，test用于存放和framework无关的java类测试代码，可以直接运行在虚拟机上，androidTest则用于存放framework相关类的测试代码。最终的效果如图：
+Android Studio 在创建工程的时候，默认创建了两个目录用于存放测试代码，test用于存放和framework无关的java类测试代码，可以直接运行在虚拟机上，androidTest则用于存放framework相关类的测试代码。移动完代码，解决一下包名和导入，最终的效果如图：
 
 ![](https://heavy-james.github.io/images/android_test/file_structure.png)
-     
+
+这里没有复制TestRunner类，是因为AS支持直接运行JUnit的TestSuite和TestCase类，也可以在项目的根目录，运行./gradlew test来执行Junit测试。结果在Eclipse中运行一样，但是多了覆盖率统计。
+
+![](https://heavy-james.github.io/images/android_test/result_as_run.png)
+![](https://heavy-james.github.io/images/android_test/result_coverage_as_run.png)
+  
+如果用./gradlew test来运行，则是html页面的的统计展示，放在pp/build/reports/tests/debug/index.html更加直观。
+
+![](https://heavy-james.github.io/images/android_test/result_html.png)
+
 
 
 
