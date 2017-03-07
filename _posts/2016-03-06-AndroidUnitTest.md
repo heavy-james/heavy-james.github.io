@@ -113,9 +113,9 @@ category: blog
 
 ##### TestResult类的方法：
 
-|序号 | 方法 | 描述 |
-| ----| ---- | ---- |
-| 1 | void addError(Test test, Throwable t) |在错误列表中加入一个错误
+| 序号 | 方法 | 描述 |
+| ---- | ---- | ---- |
+| 1 | void addError(Test test, Throwable t) |在错误列表中加入一个错误 |
 | 2	 | void addFailure(Test test, AssertionFailedError t) | 在失败列表中加入一个失败 |
 | 3	 | void endTest(Test test) |显示测试被编译的这个结果 |
 | 4 | int errorCount() | 获取被检测出错误的数量 |
