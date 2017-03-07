@@ -5,6 +5,202 @@ description: Android 单元测试学习
 category: blog
 ---
 
+## 初探 Android Unit Test
+转到Android Studio开发之后，每次新建一个空项目，AS总会默认创建androidTest和test目录，感觉goole还是推荐使用单元测试来提高代码质量的，所以决定学习一下Android上的单元测试的使用，以及它的利弊。
+
+### 几个问题
+* java单元测试，被测试的类都是自己封装的，直接运行在虚拟机中，主要测试方法的逻辑是否符合预期，各种临界条件是否有处理，测试逻辑容易理解，且结果非常容易收集。对比到android test，主要测试什么，怎么测试，测试结果如何收集。  
+
+### 最原始的代码测试
+假设有一个类：
+
+    class Caculator{
+	    plubic int plus(int a, int b){
+		    return a + b;
+	 	}
+	 	
+	 	public int minus(int a, int b){
+	 		return a - b;
+	 	}
+	
+		public int multiple(int a, int b){
+			return a * b;
+		}
+		
+		public int devide(int a, int b){
+			return a / b;
+		}
+    }
+如果在它被使用前，要测试这个类的方法是否在各种条件下正确，我们可以给它写一些测试代码：  
+
+    class TestClass{
+    	public static void main(String[] args){
+    		Caculator caculator = new Caculator();
+    		int a = 10;
+    		int b = 3;
+    		int result = caculator.plus(a ,b);
+    		if(result == 13){
+    			System.out.println("Caculator plus test succed.")
+    		}else{
+    			System.out.println("Caculator plus test faild.")
+    		}
+    		result = caculator.minus(a ,b);
+    		if(result == 7){
+    			System.out.println("Caculator minus test succed.")
+    		}else{
+    			System.out.println("Caculator minus test faild.")
+    		}
+    		result = caculator.multiple(a ,b);
+    		if(result == 30){
+    			System.out.println("Caculator multiple test succed.")
+    		}else{
+    			System.out.println("Caculator multiple test faild.")
+    		}
+    		result = caculator.divide(a ,b);
+    		if(result == 3){
+    			System.out.println("Caculator divide test succed.")
+    		}else{
+    			System.out.println("Caculator divide test faild.")
+    		}
+    	}
+    }
+
+然后我们运行这个测试类，可以根据控制台输出查看方法的执行结果。很明显这样会存在一些问题。 
+ 
+* 测试代码很多，看起来不直观  
+* 覆盖率和错误率等不能直接统计，测试结果不够直观
+* 如果有多个类和方法，每个类都需要重复if判断和日志打印，增加工作量
+* 如果有多个类和方法，每个类的测试代码都写在main里，不利于维护
+* 总是需要手动填写参数，局限性很强
+
+所以需要一个测试框架，去完成一些通用的工作，如测试结果统计、简化测试代码的编写维护、自动填写参数等。
+
+### JUnit框架
+
+#####  重要的几个类：
+
+| 序号	| 类的名称	| 类的功能 |  
+| ----| ---- | ---- |
+| 1 | Assert | assert 方法的集合 |
+| 2 | TestCase | 一个定义了运行多重测试的固定装置|
+| 3 | TestResult | TestResult 集合了执行测试样例的所有结果|
+| 4 | TestSuite | TestSuite 是测试的集合|
+
+##### Assert类的方法：
+
+| 序号 | 方法 | 描述 |
+| ----| ---- | ---- |
+| 1 | void assertEquals(boolean expected, boolean actual) | 检查两个变量或者等式是否平衡 |
+| 2 | void assertFalse(boolean condition) | 检查条件是假的 |
+| 3	 | void assertNotNull(Object object) | 检查对象不是空的
+| 4 |	void assertNull(Object object) |检查对象是空的 |
+| 5 |	void assertTrue(boolean condition) | 检查条件为真 |
+| 6 | void fail() | 在没有报告的情况下使测试不通过 |
+
+##### TestCase类的方法：
+
+| 序号 | 方法 | 描述 | 
+| ----| ---- | ---- |
+| 1 | int countTestCases() | 为被run(TestResult result) 执行的测试案例计数
+| 2 | TestResult createResult() | 创建一个默认的 TestResult 对象 |
+| 3 | String getName() | 获取 TestCase 的名称 |
+| 4 | TestResult run() | 一个运行这个测试的方便的方法，收集由TestResult 对象产生的结果 |
+| 5	 | void run(TestResult result) | 在 TestResult 中运行测试案例并收集结果
+| 6 |	void setName(String name) | 设置 TestCase 的名称 |
+| 7	 | void setUp() | 创建固定装置，例如，打开一个网络连接 |
+| 8 | void tearDown() | 拆除固定装置，例如，关闭一个网络连接 |
+| 9 |	String toString() | 返回测试案例的一个字符串表示 |
+
+##### TestResult类的方法：
+
+|序号 | 方法 | 描述 |
+| ----| ---- | ---- |
+| 1 | void addError(Test test, Throwable t) |在错误列表中加入一个错误
+| 2	 | void addFailure(Test test, AssertionFailedError t) | 在失败列表中加入一个失败 |
+| 3	 | void endTest(Test test) |显示测试被编译的这个结果 |
+| 4 | int errorCount() | 获取被检测出错误的数量 |
+| 5 | Enumeration errors() | 返回错误的详细信息 |
+| 6 | int failureCount() | 获取被检测出的失败的数量 |
+| 7 | void run(TestCase test) | 运行 TestCase |
+| 8 | int int runCount() | 获得运行测试的数量 |
+| 9 | void startTest(Test test) | 声明一个测试即将开始 |
+| 10 | void stop() | 标明测试必须停止 |
+
+##### TestSuites类的方法：
+| 序号	| 方法 | 描述 |
+| ----| ---- | ---- |
+| 1	 | void addTest(Test test) | 在套中加入测试。 |
+| 2	 | void addTestSuite(Class<? extends TestCase> testClass) | 将已经给定的类中的测试加到套中。
+| 3 |	int countTestCases() | 对这个测试即将运行的测试案例进行计数。
+| 4 |	String getName() | 返回套的名称。
+| 5 |	void run(TestResult result) | 在 TestResult 中运行测试并收集结果。
+| 6	 | void setName(String name) | 设置套的名称。
+| 7 |	Test testAt(int index) | 在给定的目录中返回测试。
+| 8 |	int testCount() | 返回套中测试的数量。
+| 9	 | static Test warning(String message) | 返回会失败的测试并且记录警告信息。|
+
+##### 用JUnit实现的CaculatorTest：
+
+    package test;
+
+    import org.junit.AfterClass;
+    import org.junit.Assume;
+    import org.junit.BeforeClass;
+    import org.junit.Ignore;
+    import org.junit.Test;
+    import junit.framework.Assert;
+    import model.Caculator;
+
+    //@Ignore
+    public class MyTestCases {
+	    static int a;
+	    static int b;
+	    static Caculator caculator;
+
+	    @BeforeClass
+	    public static void setUp() {
+		    a = 10;
+		    b = 3;
+		    caculator = new Caculator();
+		    System.out.println("MyTestCases setUp");
+	    }
+
+	    @AfterClass
+	    public static void tearDown() {
+		    // do some clean work
+		    System.out.println("MyTestCases tearDown");
+	    }
+
+	    @Test
+	    public void plus() {
+		    Assume.assumeTrue(13 == caculator.plus(a, b));
+	    }
+
+	    @Ignore("ignored")
+	    @Test
+	    public void minus() {
+		    System.out.println("MyTestCases testMinus");
+		    Assert.assertEquals(7, caculator.minus(a, b));
+	    }
+
+	    @Test(timeout = 1000)
+	    public void multiple() {
+		    Assert.assertEquals(30, caculator.multiple(a, b));
+	    }
+
+	    @Test(expected = ArithmeticException.class)
+	    public void devide() {
+		    Assert.assertEquals(3, caculator.devide(a, b));
+	    }
+
+    }
+
+执行结果：  
+![](https://heavy-james.github.io/images/junit_test_result.png)
+
+     
+
+
 
 ### 单元测试的目标函数主要有三种：
 
