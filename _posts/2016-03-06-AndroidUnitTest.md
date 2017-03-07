@@ -15,7 +15,7 @@ category: blog
 假设有一个类：
 
     class Caculator{
-	    plubic int plus(int a, int b){
+        plubic int plus(int a, int b){
 		    return a + b;
 	 	}
 	 	
@@ -30,7 +30,8 @@ category: blog
 		public int devide(int a, int b){
 			return a / b;
 		}
-    }
+    }  
+    
 如果在它被使用前，要测试这个类的方法是否在各种条件下正确，我们可以给它写一些测试代码：  
 
     class TestClass{
@@ -201,8 +202,15 @@ category: blog
     }
 
 执行结果：  
-![](https://heavy-james.github.io/images/result_junit.jpeg)
+![](https://heavy-james.github.io/images/android_test/result_junit.jpeg)  
 
+#### Android Test
+
+现在我们把这个单元测试，用Android Studio来运行起来。  
+
+Android Studio 在创建工程的时候，默认创建了两个目录用于存放测试代码，test用于存放和framework无关的java类测试代码，可以直接运行在虚拟机上，androidTest则用于存放framework相关类的测试代码。最终的效果如图：
+
+![](https://heavy-james.github.io/images/android_test/file_structure.png)
      
 
 
