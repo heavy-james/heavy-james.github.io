@@ -127,6 +127,7 @@ category: blog
 | 10 | void stop() | 标明测试必须停止 |
 
 ##### TestSuites类的方法：
+
 | 序号	| 方法 | 描述 |
 | ----| ---- | ---- |
 | 1	 | void addTest(Test test) | 在套中加入测试。 |
@@ -138,9 +139,13 @@ category: blog
 | 7 |	Test testAt(int index) | 在给定的目录中返回测试。
 | 8 |	int testCount() | 返回套中测试的数量。
 | 9	 | static Test warning(String message) | 返回会失败的测试并且记录警告信息。|
+  
+&nbsp;  
 
 ##### 用JUnit实现的CaculatorTest：
-
+  
+&nbsp; 
+    
     package test;
 
     import org.junit.AfterClass;
@@ -196,7 +201,7 @@ category: blog
     }
 
 执行结果：  
-![](https://heavy-james.github.io/images/junit_test_result.png)
+![](https://heavy-james.github.io/images/result_junit.jpeg)
 
      
 
