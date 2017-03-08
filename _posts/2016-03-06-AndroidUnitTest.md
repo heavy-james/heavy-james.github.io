@@ -11,7 +11,7 @@ category: blog
 ## 概要
 * Android Test是基于Junit框架的，它既可以运行在本机的JVM上，也可以运行在设备或者安卓虚拟机上。
 
-![](https://heavy-james.github.io/images/android_test/test_types_2x.jpeg) 
+![](https://heavy-james.github.io/images/android_test/test_types_2x.png) 
 
 * Roboletric  
 如果运行在JVM上，当需要测试android framework相关的类时，虽然android sdk提供了android.jar供Junit加载相关类，但是android 的 Activity Service等组件不能直接实例化，生命周期也不会自动执行，view等控件也不能直接实例化，自动填充，所以需要Roboletric框架来帮助实例化android的组件，执行生命周期回调，加载控件等。
