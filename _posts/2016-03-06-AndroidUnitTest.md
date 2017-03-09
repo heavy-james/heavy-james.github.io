@@ -8,6 +8,8 @@ category: blog
 # 初探 Android Unit Test
 转到Android Studio开发之后，每次新建一个空项目，AS总会默认创建androidTest和test目录，感觉goole还是推荐使用单元测试来提高代码质量的，所以决定学习一下Android上的单元测试的使用，以及它的利弊。
 
+* [android test 官方指南](https://developer.android.com/studio/test/index.html)
+
 ## 概要
 * Android Test是基于Junit框架的，它既可以运行在本机的JVM上，也可以运行在设备或者安卓虚拟机上。
 
@@ -19,7 +21,7 @@ category: blog
 当测试一些依赖关系比较复杂的类时，如果实例化它所依赖的全部对象，可能会导致测试代码编写难度过高，或者工作量过大，这时可以使用mock机制，创建一些未完全实例化的对象，给它指定一些必要的行为，来满足我们测试需求。比较流行的mock框架有mockito、powermock等。
 * jacoco   
 如果用gradle执行test任务，在本机JVM上运行Android Test，android gradle插件还会在app/build/reports目录下，生成html页面的测试结果。如果要查看覆盖率，还可以使用jacoco插件。
-* Espresso框架  
+* espresso框架  
 android 官方的测试框架，提供了整套的API来操作组件和控件，用以在android环境下模拟交互动作、获取组件状态。
 
 ## JUnit 框架
@@ -217,8 +219,65 @@ android 官方的测试框架，提供了整套的API来操作组件和控件，
 ![](https://heavy-james.github.io/images/android_test/result_junit.jpeg)  
 
 #### JUnitTest机制
-//todo
 
+JUnit定义了一些java 运行时级别的注解，在编写测试代码的时候，需要带上注解，JUnit实例化Runner对象时，会创建一个TestClass对象，使用了注解的类和方法就是在这里被收集和绑定的：
+
+构造方法中创建了两个map，key是自定义的Annotaiton,value是对应的method和field的list。并调用扫描方法收集。
+
+    public TestClass(Class<?> clazz) {
+    	......
+
+        Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations =
+                new LinkedHashMap<Class<? extends Annotation>, List<FrameworkMethod>>();
+        Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations =
+                new LinkedHashMap<Class<? extends Annotation>, List<FrameworkField>>();
+
+        scanAnnotatedMembers(methodsForAnnotations, fieldsForAnnotations);
+
+       ......
+    }
+
+遍历classes，收集信息：
+
+    protected void scanAnnotatedMembers(Map<Class<? extends Annotation>, List<FrameworkMethod>> methodsForAnnotations, Map<Class<? extends Annotation>, List<FrameworkField>> fieldsForAnnotations) {
+        for (Class<?> eachClass : getSuperClasses(clazz)) {
+            for (Method eachMethod : MethodSorter.getDeclaredMethods(eachClass)) {
+                addToAnnotationLists(new FrameworkMethod(eachMethod), methodsForAnnotations);
+            }
+            
+            for (Field eachField : getSortedDeclaredFields(eachClass)) {
+                addToAnnotationLists(new FrameworkField(eachField), fieldsForAnnotations);
+            }
+        }
+    }
+    
+调用Runner的run方法，将结果收集到Result中：    
+ 
+    public Result run(Runner runner) {
+        Result result = new Result();
+        RunListener listener = result.createListener();
+        notifier.addFirstListener(listener);
+        try {
+            notifier.fireTestRunStarted(runner.getDescription());
+            runner.run(notifier);
+            notifier.fireTestRunFinished(result);
+        } finally {
+            removeListener(listener);
+        }
+        return result;
+    }
+    
+最终调用的是Runner的runChild方法，我们的测试方法在这里被执行：
+    
+       @Override
+    protected void runChild(final FrameworkMethod method, RunNotifier notifier) {
+        Description description = describeChild(method);
+        if (isIgnored(method)) {
+            notifier.fireTestIgnored(description);
+        } else {
+            runLeaf(methodBlock(method), description, notifier);
+        }
+    }
 ## Android Test
 
 ### 使用Android Test Library
@@ -233,9 +292,7 @@ android 官方的测试框架，提供了整套的API来操作组件和控件，
             testCompile 'junit:junit:4.12'
         }
         
-* 将测试代码复制到main/test/java下，最终的效果如图：
-
-![](https://heavy-james.github.io/images/android_test/file_structure.png)
+* 将测试代码复制到main/test/java下
 
 * 选中TestSuit类，直接运行，在AS的run 窗口中可以查看结果：
 
@@ -251,12 +308,67 @@ android 官方的测试框架，提供了整套的API来操作组件和控件，
 
 
 ### Roboletric框架
-//todo
+如果我们要在JVM上直接测试android组件、控件，直接实例化是不能够正常运行的，组件的生命周期不会自动回调，控件也不会自动填充，需要使用Roboletric框架来模拟android 环境。
+
+* Roboletric 使用
+
+        public class MainActivityTest {
+            private ActivityController<MainActivity> mController;
+            private MainActivity activity;
+
+            @Before
+            public void setUp() throws Exception {
+    
+            // Create new activity
+            this.mController = buildActivity(MainActivity.class);
+            this.activity = this.mController.create().postCreate(null).start().resume().visible().get();
+            }
+
+            @After
+            public void tearDown() throws Exception {
+
+                // Destroy activity
+                this.mController.pause().stop().destroy();
+                this.activity.finish();
+            }
+
+            @Test
+            public void testOnCreateNotNull() {
+                assertThat(this.activity).isNotNull();
+            }
+            
+            
+            @Test
+            public void clickButton() {
+                Button button = (Button) activity.findViewById(R.id.button);
+                assertNotNull("test button could not be found", button);
+                assertTrue("button does not contain text 'Click Me!'", "Click Me".equals(button.getText()));
+                }
+            }
+
+
+
+
+* Roboletric 原理
+ 大致上是利用shadow原理（代理模式），封装了android真实的类，并且拓展了原来类的一些逻辑，以解除对android运行环境的依赖。
 
 ### mockito框架
-//todo
+* mockito 使用  
 
+        List<String> myMockList = Mockito.mock(List<String>.class);
+        Mockito.when(myMockList.get(0)).thenReturn("Hello, I am James");
+        assertEquals("Hello, I am James", myMockList.get(0));
+
+* [mockito 原理](http://blog.csdn.net/jamesdoctor/article/details/50019103)
+
+   ![](https://heavy-james.github.io/images/android_test/mock_mock.png)   
+        
+### Insturmentation
+当运行android.test.InstrumentationTestRunner的时候，android.app.Instrumentation这个类会最先初始化，然后加载app代码，并提供系统的所有与app交互的接口。如图所示：  
+![](https://heavy-james.github.io/images/android_test/instumenation_explain.png)
+   
 ### Espresso 框架
+Espresso是android提供的，基于intrumentation的一套UI测试框架。它提供了view的匹配、搜索、操作和测试等功能，易于使用。
 
 * Espresso 框架结构示意图
 ![](https://heavy-james.github.io/images/android_test/espresso-cheat-sheet-2.1.0.png)
