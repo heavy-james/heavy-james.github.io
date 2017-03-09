@@ -1,6 +1,5 @@
 ---
 layout: post
-title: 初探 Android Unit Test
 description: Android 单元测试学习
 category: blog
 ---
