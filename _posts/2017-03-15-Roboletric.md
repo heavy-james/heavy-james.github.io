@@ -1,4 +1,11 @@
-### Roboletric框架
+---
+layout: post
+title:  Roboletric框架
+description: Android 单元测试学习
+category: blog
+---
+
+
 如果我们要在JVM上直接测试android组件、控件，直接实例化是不能够正常运行的，组件的生命周期不会自动回调，控件也不会自动填充，需要使用Roboletric框架来模拟android 环境。
 
 * Roboletric 使用
