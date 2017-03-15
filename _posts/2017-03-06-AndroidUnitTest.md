@@ -56,9 +56,11 @@ android 官方的测试框架，提供了整套的API来操作组件和控件，
 
 
 ### Insturmentation
-[to android developer](https://developer.android.com/reference/android/app/Instrumentation.html)
-[原理简介](http://www.cnblogs.com/zhitang2009/p/3423068.html)  
-当运行android.test.InstrumentationTestRunner的时候，android.app.Instrumentation这个类会最先初始化，然后加载app代码，并提供系统的所有与app交互的接口。如图所示：  
+[to android developer](https://developer.android.com/reference/android/app/Instrumentation.html)  
+[原理简介](http://www.cnblogs.com/zhitang2009/p/3423068.html)    
+[使用简介](http://www.cnblogs.com/freeliver54/archive/2011/08/04/2127773.html)
+
+Insturmentation是android framework里的一个组件，它没有界面，当运行android.test.InstrumentationTestRunner的时候，android.app.Instrumentation这个类会最先初始化，然后加载app代码，并提供系统的所有与app交互的接口。如图所示：  
 ![](https://heavy-james.github.io/images/android_test/instumenation_explain.png)
    
 ### Espresso 框架

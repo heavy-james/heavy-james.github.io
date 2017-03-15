@@ -10,6 +10,34 @@ category: blog
 
 * Roboletric 使用
 
+gradle 配置：
+
+在项目的根目录下的build.gradle中添加：
+
+    buildscript {
+        repositories {
+            //add this line
+            jcenter()
+        }
+        dependencies {
+            classpath 'com.android.tools.build:gradle:1.2.3'
+        } 
+    } 
+
+在app目录下的build.gralde中添加：
+
+    dependencies {
+        compile fileTree(dir: 'libs', include: ['*.jar'])
+        testCompile 'junit:junit:4.12'
+        //add this line
+        testCompile('org.robolectric:robolectric:3.0') {
+        	  //alternative module
+            exclude module: 'commons-logging'
+        } 
+    }    
+
+代码示例： 
+
         public class MainActivityTest {
             private ActivityController<MainActivity> mController;
             private MainActivity activity;
@@ -48,4 +76,4 @@ category: blog
 
 
 * Roboletric 原理
- 大致上是利用shadow原理（代理模式），封装了android真实的类，并且拓展了原来类的一些逻辑，以解除对android运行环境的依赖。
+ 待研究，大致上是利用代理模式，封装了android真实的类，并且拓展了原来类的一些逻辑，以解除对android运行环境的依赖，提供了方便测试的一些api。
