@@ -6,7 +6,7 @@ category: blog
 ---
 
 
-转到Android Studio开发之后，每次新建一个空项目，AS总会默认创建androidTest和test目录，感觉goole还是推荐使用单元测试来提高代码质量的，所以决定学习一下Android上的单元测试的使用，以及它的利弊。
+转到Android Studio开发之后，每次新建一个空项目，AS总会默认创建androidTest和test目录，感觉google还是推荐使用单元测试来提高代码质量的，所以决定学习一下Android上的单元测试的使用，以及它的利弊。
 
 * [android test 官方指南](https://developer.android.com/studio/test/index.html)
 
